@@ -4,6 +4,9 @@ import random
 #import the pypartpicker api
 from pypartpicker import Scraper
 
+#makes it easier, less characters to type
+sc = Scraper()
+
 #takes the google api client
 from googleapiclient.discovery import build
 
@@ -260,6 +263,30 @@ async def qlink(ctx, quantity, *, query):
         link = "https://www.youtube.com/watch?v=" + str(videoId)
         await ctx.send(link)
         print("the qlink function worked")
+
+################################################################################
+#testing pypartpicker
+#aka my prefered unofficial pcpartpicker api
+
+#test command that gets first result from pcpartpicker search
+#it returns the name, url, type, price, and image link
+#the type returns none regardless of the product
+#im pretty sure it is something on the unofficial api creator's end
+#returns error saying that something is wrong with the http request since it cannot send an empty message
+@client.command()
+async def pcpartpicker(ctx, *, query):
+    result = sc.part_search(query, limit = 1, region = "us")
+    firstProductName = result[0].name
+    firstProductPrice = result[0].price
+#    firstProductType = result[0].type
+    firstProductUrl = result[0].url
+    firstProductImage = result[0].image
+    await ctx.send("The product name is: " + firstProductName)
+    await ctx.send("It costs this much: " + firstProductPrice)
+#    await ctx.send("This is a " + firstProductType)
+    await ctx.send("The url can be found it here: " + firstProductUrl)
+    await ctx.send("The image link can be found here: " + firstProductImage)
+    print("the pcpartpicker command worked")
 
 ################################################################################
 

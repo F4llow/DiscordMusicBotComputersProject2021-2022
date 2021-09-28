@@ -63,4 +63,20 @@ def nameAndPrice():
     firstProductPrice = result[0].price
     print("The " + firstProductName + " is " + firstProductPrice)
 
-nameAndPrice()
+#nameAndPrice()
+
+def pcpartpicker():
+    query2 = input("Please enter your PCPartPicker search: ")
+    result2 = sc.part_search(query2, limit = 1, region = "us")
+    firstProductName = result2[0].name
+    firstProductPrice = result2[0].price
+    firstProductType = result2[0].type
+    firstProductUrl = result2[0].url
+    firstProductImage = result2[0].image
+    print(firstProductName)
+    print(firstProductPrice)
+    print(firstProductType)
+    print(firstProductUrl)
+    print(firstProductImage)
+
+pcpartpicker()
