@@ -290,7 +290,8 @@ async def pcpartpicker(ctx, *, query):
 
 ################################################################################
 
-#players = {}
+#wish me luck
+queue = {}
 
 @client.command()
 async def join(ctx):
@@ -355,6 +356,70 @@ async def play(ctx, *, qurl):
                 await ctx.send("A song is already playing.")
                 print("the play command worked but a song is already playing")
                 return
+
+@client.command()
+async def pause(ctx):
+    server = ctx.message.guild
+    voice_channel = server.voice_client
+    voice_channel.pause()
+    await ctx.send("the music has been paused")
+    print("the pause command worked")
+
+@client.command()
+async def resume(ctx):
+    server = ctx.message.guild
+    voice_channel = server.voice_client
+    voice_channel.resume()
+    await ctx.send("the music has been resumed")
+    print("the resume command worked")
+
+@client.command()
+async def isplaying(ctx):
+    server = ctx.message.guild
+    voice_channel = server.voice_client
+    bool = voice_channel.is_playing()
+    await ctx.send(bool)
+    print("the isplaing command works")
+
+@client.command()
+async def ispaused(ctx):
+    server = ctx.message.guild
+    voice_channel = server.voice_client
+    bool = voice_channel.is_paused()
+    await ctx.send(bool)
+    print("the ispaused command works")
+
+@client.command()
+async def stop(ctx):
+    server = ctx.message.guild
+    voice_channel = server.voice_client
+    voice_channel.stop()
+    await ctx.send("the song has now stopped")
+    print("the stop command has worked")
+
+@client.command()
+async def playqueue(ctx, *, query):
+    result = youtube.search().list(q = query, part = "snippet", type = "video", maxResults = 1)
+    response2 = result.execute()
+    for i in response2["items"]:
+        videoId = i["id"]["videoId"]
+        link = "https://www.youtube.com/watch?v=" + str(videoId)
+        url = link
+        FFMPEG_OPTIONS = {"before_options": "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5", "options": "-vn"}
+        voice = get(client.voice_clients, guild = ctx.guild)
+        if not voice.is_playing():
+            ydl_opts = {"format": "bestaudio"}
+            with YoutubeDL(ydl_opts) as ydl:
+                info = ydl.extract_info(url, download = False)
+            URL = info["formats"][0]["url"]
+            voice.play(discord.FFmpegPCMAudio(URL, **FFMPEG_OPTIONS))
+            voice.is_playing()
+            await ctx.send(str(url) + " is now playing.")
+            print("the play command worked")
+        else:
+            await ctx.send("A song is already playing.")
+            print("the play command worked but a song is already playing")
+            return
 
 # @client.command()
 # async def play(ctx, *, query):
