@@ -407,51 +407,6 @@ async def play(ctx, *, qurl):
 #     await ctx.send(userChannel)
 #     await ctx.send(botChannel)
 
-#play command that takes url or search
-# @client.command()
-# async def playsol(ctx, *, query):
-#     linkstart = "https://"
-# checks if the arg is a link
-#     if query[:7] == linkstart:
-#         url = query
-#         FFMPEG_OPTIONS = {"before_options": "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5", "options": "-vn"}
-#         voice = get(client.voice_clients, guild = ctx.guild)
-#         if not voice.is_playing():
-#             ydl_opts = {"format": "bestaudio"}
-#             with YoutubeDL(ydl_opts) as ydl:
-#                 info = ydl.extract_info(url, download = False)
-#             URL = info["formats"][0]["url"]
-#             voice.play(discord.FFmpegPCMAudio(URL, **FFMPEG_OPTIONS))
-#             voice.is_playing()
-#             await ctx.send(str(url) + " is now playing.")
-#             print("the play command worked")
-#         else:
-#             await ctx.send("A song is already playing.")
-#             print("the play command worked")
-#             return
-#     else:
-#         result = youtube.search().list(q = query, part = "snippet", type = "video", maxResults = 1)
-#         response2 = result.execute()
-#         for i in response2["items"]:
-#             videoId = i["id"]["videoId"]
-#             link = "https://www.youtube.com/watch?v=" + str(videoId)
-#             url = link
-#             FFMPEG_OPTIONS = {"before_options": "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5", "options": "-vn"}
-#             voice = get(client.voice_clients, guild = ctx.guild)
-#             if not voice.is_playing():
-#                 ydl_opts = {"format": "bestaudio"}
-#                 with YoutubeDL(ydl_opts) as ydl:
-#                     info = ydl.extract_info(url, download = False)
-#                 URL = info["formats"][0]["url"]
-#                 voice.play(discord.FFmpegPCMAudio(URL, **FFMPEG_OPTIONS))
-#                 voice.is_playing()
-#                 await ctx.send(str(url) + " is now playing.")
-#                 print("the play command worked")
-#             else:
-#                 await ctx.send("A song is already playing.")
-#                 print("the play command worked")
-#                 return
-
 # command that sends plays youtube playlist using link
 # @client.command()
 # async def playlist(ctx, url):
