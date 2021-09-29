@@ -311,14 +311,12 @@ async def leave(ctx):
     await ctx.send("I have left your voice channel.")
     print("The leave command has worked")
 
+#command that combines play and playurl so it will take either search or url
 @client.command()
-async def play(ctx, *, query):
-    result = youtube.search().list(q = query, part = "snippet", type = "video", maxResults = 1)
-    response2 = result.execute()
-    for i in response2["items"]:
-        videoId = i["id"]["videoId"]
-        link = "https://www.youtube.com/watch?v=" + str(videoId)
-        url = link
+async def play(ctx, *, qurl):
+    linkstart = "https://www.youtube.com/"
+    if linkstart in qurl:
+        url = qurl
         FFMPEG_OPTIONS = {"before_options": "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5", "options": "-vn"}
         voice = get(client.voice_clients, guild = ctx.guild)
         if not voice.is_playing():
@@ -328,31 +326,78 @@ async def play(ctx, *, query):
             URL = info["formats"][0]["url"]
             voice.play(discord.FFmpegPCMAudio(URL, **FFMPEG_OPTIONS))
             voice.is_playing()
-            await ctx.send(str(url) + " is now playing.")
-            print("the play command worked")
+            await ctx.send("Your song is now playing.")
+            print("the playurl command worked")
         else:
-            await ctx.send("A song is already playing.")
-            print("the play command worked but a song is already playing")
+            await ctx.send("A song is already playing and the queue is currently in development.")
+            print("the playurl command worked but a song is already playing")
             return
+    else:
+        query = qurl
+        result = youtube.search().list(q = query, part = "snippet", type = "video", maxResults = 1)
+        response2 = result.execute()
+        for i in response2["items"]:
+            videoId = i["id"]["videoId"]
+            link = "https://www.youtube.com/watch?v=" + str(videoId)
+            url = link
+            FFMPEG_OPTIONS = {"before_options": "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5", "options": "-vn"}
+            voice = get(client.voice_clients, guild = ctx.guild)
+            if not voice.is_playing():
+                ydl_opts = {"format": "bestaudio"}
+                with YoutubeDL(ydl_opts) as ydl:
+                    info = ydl.extract_info(url, download = False)
+                URL = info["formats"][0]["url"]
+                voice.play(discord.FFmpegPCMAudio(URL, **FFMPEG_OPTIONS))
+                voice.is_playing()
+                await ctx.send(str(url) + " is now playing.")
+                print("the play command worked")
+            else:
+                await ctx.send("A song is already playing.")
+                print("the play command worked but a song is already playing")
+                return
+
+# @client.command()
+# async def play(ctx, *, query):
+#     result = youtube.search().list(q = query, part = "snippet", type = "video", maxResults = 1)
+#     response2 = result.execute()
+#     for i in response2["items"]:
+#         videoId = i["id"]["videoId"]
+#         link = "https://www.youtube.com/watch?v=" + str(videoId)
+#         url = link
+#         FFMPEG_OPTIONS = {"before_options": "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5", "options": "-vn"}
+#         voice = get(client.voice_clients, guild = ctx.guild)
+#         if not voice.is_playing():
+#             ydl_opts = {"format": "bestaudio"}
+#             with YoutubeDL(ydl_opts) as ydl:
+#                 info = ydl.extract_info(url, download = False)
+#             URL = info["formats"][0]["url"]
+#             voice.play(discord.FFmpegPCMAudio(URL, **FFMPEG_OPTIONS))
+#             voice.is_playing()
+#             await ctx.send(str(url) + " is now playing.")
+#             print("the play command worked")
+#         else:
+#             await ctx.send("A song is already playing.")
+#             print("the play command worked but a song is already playing")
+#             return
 
 # command that sends plays youtube video using link
-@client.command()
-async def playurl(ctx, url):
-    FFMPEG_OPTIONS = {"before_options": "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5", "options": "-vn"}
-    voice = get(client.voice_clients, guild = ctx.guild)
-    if not voice.is_playing():
-        ydl_opts = {"format": "bestaudio"}
-        with YoutubeDL(ydl_opts) as ydl:
-            info = ydl.extract_info(url, download = False)
-        URL = info["formats"][0]["url"]
-        voice.play(discord.FFmpegPCMAudio(URL, **FFMPEG_OPTIONS))
-        voice.is_playing()
-        await ctx.send("Your song is now playing.")
-        print("the playurl command worked")
-    else:
-        await ctx.send("A song is already playing and the queue is currently in development.")
-        print("the playurl command worked but a song is already playing")
-        return
+# @client.command()
+# async def playurl(ctx, url):
+#     FFMPEG_OPTIONS = {"before_options": "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5", "options": "-vn"}
+#     voice = get(client.voice_clients, guild = ctx.guild)
+#     if not voice.is_playing():
+#         ydl_opts = {"format": "bestaudio"}
+#         with YoutubeDL(ydl_opts) as ydl:
+#             info = ydl.extract_info(url, download = False)
+#         URL = info["formats"][0]["url"]
+#         voice.play(discord.FFmpegPCMAudio(URL, **FFMPEG_OPTIONS))
+#         voice.is_playing()
+#         await ctx.send("Your song is now playing.")
+#         print("the playurl command worked")
+#     else:
+#         await ctx.send("A song is already playing and the queue is currently in development.")
+#         print("the playurl command worked but a song is already playing")
+#         return
 
 #checking to see if the bot is in a call, if it not then join a call
 # @client.command()
