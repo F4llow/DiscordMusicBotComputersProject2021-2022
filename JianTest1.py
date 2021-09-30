@@ -291,7 +291,7 @@ async def pcpartpicker(ctx, *, query):
 ################################################################################
 
 #wish me luck
-queue = {}
+queueList = []
 
 @client.command()
 async def join(ctx):
@@ -318,6 +318,7 @@ async def play(ctx, *, qurl):
     linkstart = "https://www.youtube.com/"
     if linkstart in qurl:
         url = qurl
+        queueList.append(url)
         FFMPEG_OPTIONS = {"before_options": "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5", "options": "-vn"}
         voice = get(client.voice_clients, guild = ctx.guild)
         if not voice.is_playing():
@@ -330,8 +331,9 @@ async def play(ctx, *, qurl):
             await ctx.send("Your song is now playing.")
             print("the playurl command worked")
         else:
-            await ctx.send("A song is already playing and the queue is currently in development.")
-            print("the playurl command worked but a song is already playing")
+            queueList.append(url)
+            await ctx.send("Your song has been added to queue which is in development.")
+            print("the play command added the url to queue")
             return
     else:
         query = qurl
@@ -341,6 +343,7 @@ async def play(ctx, *, qurl):
             videoId = i["id"]["videoId"]
             link = "https://www.youtube.com/watch?v=" + str(videoId)
             url = link
+            queueList.append(url)
             FFMPEG_OPTIONS = {"before_options": "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5", "options": "-vn"}
             voice = get(client.voice_clients, guild = ctx.guild)
             if not voice.is_playing():
@@ -353,8 +356,9 @@ async def play(ctx, *, qurl):
                 await ctx.send(str(url) + " is now playing.")
                 print("the play command worked")
             else:
-                await ctx.send("A song is already playing.")
-                print("the play command worked but a song is already playing")
+                queueList.append(url)
+                await ctx.send("Your song has been added to queue which is in development.")
+                print("the play command your song to the queue")
                 return
 
 @client.command()
@@ -398,28 +402,27 @@ async def stop(ctx):
     print("the stop command has worked")
 
 @client.command()
-async def playqueue(ctx, *, query):
+async def addtoqueue(ctx, *, query):
     result = youtube.search().list(q = query, part = "snippet", type = "video", maxResults = 1)
     response2 = result.execute()
     for i in response2["items"]:
         videoId = i["id"]["videoId"]
         link = "https://www.youtube.com/watch?v=" + str(videoId)
         url = link
-        FFMPEG_OPTIONS = {"before_options": "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5", "options": "-vn"}
-        voice = get(client.voice_clients, guild = ctx.guild)
-        if not voice.is_playing():
-            ydl_opts = {"format": "bestaudio"}
-            with YoutubeDL(ydl_opts) as ydl:
-                info = ydl.extract_info(url, download = False)
-            URL = info["formats"][0]["url"]
-            voice.play(discord.FFmpegPCMAudio(URL, **FFMPEG_OPTIONS))
-            voice.is_playing()
-            await ctx.send(str(url) + " is now playing.")
-            print("the play command worked")
-        else:
-            await ctx.send("A song is already playing.")
-            print("the play command worked but a song is already playing")
-            return
+        queueList.append(url)
+        await ctx.send("Your song has been added to queue.")
+        print("the addtoqueue command worked")
+
+@client.command()
+async def queue(ctx):
+    await ctx.send(queueList)
+    print("the queue command worked")
+
+@client.command()
+async def clearqueue(ctx):
+    queuelist.clear()
+    await ctx.send("the queue has been cleared")
+    print("the clearqueue worked")
 
 # @client.command()
 # async def play(ctx, *, query):
