@@ -420,7 +420,11 @@ async def queue(ctx):
 
 @client.command()
 async def clearqueue(ctx):
+<<<<<<< HEAD
     queueList.clear()
+=======
+    queuelist.clear()
+>>>>>>> f0a44a81241e5b053ceaf85bb2360e3a2bae7bc8
     await ctx.send("the queue has been cleared")
     print("the clearqueue worked")
 
