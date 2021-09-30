@@ -331,7 +331,6 @@ async def play(ctx, *, qurl):
             await ctx.send("Your song is now playing.")
             print("the playurl command worked")
         else:
-            queueList.append(url)
             await ctx.send("Your song has been added to queue which is in development.")
             print("the play command added the url to queue")
             return
@@ -356,7 +355,6 @@ async def play(ctx, *, qurl):
                 await ctx.send(str(url) + " is now playing.")
                 print("the play command worked")
             else:
-                queueList.append(url)
                 await ctx.send("Your song has been added to queue which is in development.")
                 print("the play command your song to the queue")
                 return
