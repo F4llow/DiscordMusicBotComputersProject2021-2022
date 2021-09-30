@@ -1,5 +1,6 @@
-#import random to use for later commands
+#import random and time to use for later commands
 import random
+import time
 
 #import the pypartpicker api
 from pypartpicker import Scraper
@@ -421,6 +422,18 @@ async def clearqueue(ctx):
     queueList.clear()
     await ctx.send("the queue has been cleared")
     print("the clearqueue worked")
+
+@client.command()
+async def playqueue(ctx):
+    if ctx.voice_client is None:
+        await ctx.send("I am not in a voice channel.")
+        print("the playqueue was called while not in a voice channel")
+    else:
+        server = ctx.message.guild
+        voice_channel = server.voice_client
+        while voice_channel.is_playing() == False and voice_channel.is_paused() == False:
+            print("the bot is empty")
+            time.sleep(2)
 
 # @client.command()
 # async def play(ctx, *, query):
