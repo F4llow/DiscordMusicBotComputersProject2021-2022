@@ -457,7 +457,6 @@ async def play(ctx, *, query):
                     print("a song is playing")
                     time.sleep(2)
                 else:
-                    del queueList[0]
                     for i in queueList:
                         ydl_opts = {"format": "bestaudio"}
                         with YoutubeDL(ydl_opts) as ydl:
@@ -466,8 +465,9 @@ async def play(ctx, *, query):
                         voice.play(discord.FFmpegPCMAudio(url, **FFMPEG_OPTIONS))
                         voice.is_playing()
                         await ctx.send(str(queueList[0]) + " is now playing.")
-                        del queueList[0]
                         print("the play command worked")
+                        time.sleep(5)
+                        del queueList[0]
                         while voice.is_playing():
                             print("a song is playing")
                             time.sleep(2)
