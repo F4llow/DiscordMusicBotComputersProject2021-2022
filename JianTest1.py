@@ -466,6 +466,7 @@ async def play(ctx, *, query):
                         voice.is_playing()
                         await ctx.send(str(queueList[0]) + " is now playing.")
                         print("the play command worked")
+                        #give time to download the song
                         time.sleep(5)
                         del queueList[0]
                         while voice.is_playing():
