@@ -1,6 +1,8 @@
 #import random and time to use for later commands
 import random
 import time
+import asyncio
+import shutil
 
 #import the pypartpicker api
 from pypartpicker import Scraper
@@ -315,7 +317,7 @@ async def leave(ctx):
 
 #command that combines play and playurl so it will take either search or url
 @client.command()
-async def play(ctx, *, qurl):
+async def playog(ctx, *, qurl):
     linkstart = "https://www.youtube.com/"
     if linkstart in qurl:
         url = qurl
@@ -424,16 +426,113 @@ async def clearqueue(ctx):
     print("the clearqueue worked")
 
 @client.command()
-async def playqueue(ctx):
+async def play(ctx, *, query):
     if ctx.voice_client is None:
         await ctx.send("I am not in a voice channel.")
-        print("the playqueue was called while not in a voice channel")
+        print("the play was called while not in a voice channel")
     else:
         server = ctx.message.guild
         voice_channel = server.voice_client
-        while voice_channel.is_playing() == False and voice_channel.is_paused() == False:
-            print("the bot is empty")
-            time.sleep(2)
+        result = youtube.search().list(q = query, part = "snippet", type = "video", maxResults = 1)
+        response = result.execute()
+        for i in response["items"]:
+            id = i["id"]["videoId"]
+            link = "https://www.youtube.com/watch?v=" + str(id)
+            queueList.append(link)
+            FFMPEG_OPTIONS = {"before_options": "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5", "options": "-vn"}
+            voice = get(client.voice_clients, guild = ctx.guild)
+            if not voice.is_playing():
+                ydl_opts = {"format": "bestaudio"}
+                with YoutubeDL(ydl_opts) as ydl:
+                    info = ydl.extract_info(queueList[0], download = False)
+                url = info["formats"][0]["url"]
+                voice.play(discord.FFmpegPCMAudio(url, **FFMPEG_OPTIONS))
+                voice.is_playing()
+                await ctx.send(str(queueList[0]) + " is now playing.")
+                del queueList[0]
+                print("the play command worked")
+            else:
+                await ctx.send(str(link) + "has been added to the queue.")
+                while voice.is_playing():
+                    print("a song is playing")
+                    time.sleep(2)
+                else:
+                    del queueList[0]
+                    for i in queueList:
+                        ydl_opts = {"format": "bestaudio"}
+                        with YoutubeDL(ydl_opts) as ydl:
+                            info = ydl.extract_info(str(queueList[0]), download = False)
+                        url = info["formats"][0]["url"]
+                        voice.play(discord.FFmpegPCMAudio(url, **FFMPEG_OPTIONS))
+                        voice.is_playing()
+                        await ctx.send(str(queueList[0]) + " is now playing.")
+                        del queueList[0]
+                        print("the play command worked")
+                        while voice.is_playing():
+                            print("a song is playing")
+                            time.sleep(2)
+                        else:
+                            break
+
+# async def play(query):
+#     if ctx.voice_client is None:
+#         await ctx.send("I am not in a voice channel.")
+#         print("the play function was called while not in a voice channel")
+#     else:
+#         result = youtube.search().list(q = query, part = "snippet", type = "video", maxResults = 1)
+#         response = result.execute()
+#         for i in response["items"]:
+#             id = i["id"]["videoId"]
+#             link = "https://www.youtube.com/watch?v=" + str(id)
+#             queueList.append(link)
+#             FFMPEG_OPTIONS = {"before_options": "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5", "options": "-vn"}
+#             voice = get(client.voice_clients, guild = ctx.guild)
+#             if not voice.is_playing():
+#                 ydl_opts = {"format": "bestaudio"}
+#                 with YoutubeDL(ydl_opts) as ydl:
+#                     info = ydl.extract_info(link, download = False)
+#                 url = info["formats"][0]["url"]
+#                 voice.play(discord.FFmpegPCMAudio(url, **FFMPEG_OPTIONS))
+#                 voice.is_playing()
+#                 await ctx.send(str(link) + " is now playing.")
+#                 print("the play command worked")
+#             else:
+#                 await ctx.send("Your song has been added to the queue.")
+#                 print("the play command added the song to queue")
+
+# async def isPlaying():
+#     server = ctx.message.guild
+#     voice_channel = server.voice_client
+#     result = youtube.search().list(q = query, part = "snippet", type = "video", maxResults = 1)
+#     response = result.execute()
+#     for i in response["items"]:
+#         id = i["id"]["videoId"]
+#         link = "https://www.youtube.com/watch?v=" + str(id)
+#         queueList.append(link)
+#         FFMPEG_OPTIONS = {"before_options": "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5", "options": "-vn"}
+#         voice = get(client.voice_clients, guild = ctx.guild)
+#         if not voice.is_playing():
+#             ydl_opts = {"format": "bestaudio"}
+#             with YoutubeDL(ydl_opts) as ydl:
+#                 info = ydl.extract_info(link, download = False)
+#             url = info["formats"][0]["url"]
+#             voice.play(discord.FFmpegPCMAudio(url, **FFMPEG_OPTIONS))
+#             voice.is_playing()
+#             await ctx.send(str(link) + " is now playing.")
+#             print("the play command worked")
+#         else:
+#             while voice_channel.is_playing() == False and voice_channel.is_paused() == False:
+
+
+    # if ctx.voice_client is None:
+    #     await ctx.send("I am not in a voice channel.")
+    #     print("the playqueue was called while not in a voice channel")
+    # else:
+    #     server = ctx.message.guild
+    #     voice_channel = server.voice_client
+    #     while voice_channel.is_playing() == False and voice_channel.is_paused() == False:
+    #         print("the bot is empty")
+    #         time.sleep(2)
 
 # @client.command()
 # async def play(ctx, *, query):
