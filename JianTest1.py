@@ -293,6 +293,43 @@ async def pcpartpicker(ctx, *, query):
 
 ################################################################################
 
+from riotwatcher import LolWatcher, ApiError
+
+Rapi_key = 'RGAPI-7ccbae1b-8198-4188-8286-a2c482e2b03e'
+watcher = LolWatcher(Rapi_key)
+my_region = 'na1'
+
+@client.command()
+async def info(ctx, *, summoner1):
+    stats = watcher.summoner.by_name(my_region, summoner1)
+    await ctx.send(stats)
+    return print("the info command worked")
+
+@client.command()
+async def rank(ctx, *, summoner2):
+    stats1 = watcher.summoner.by_name(my_region, summoner2)
+    rankStats = watcher.league.by_summoner(my_region, stats1['id'])
+    await ctx.send(rankStats)
+    return print("the rank command worked")
+
+@client.command()
+async def rankf(ctx, *, summoner2):
+    stats1 = watcher.summoner.by_name(my_region, summoner2)
+    rankStats = watcher.league.by_summoner(my_region, stats1['id'])
+    rank = "In Ranked Flex, " + stats1['name'] + " is " + rankStats[0]['tier'] + " " + rankStats[0]['rank'] + "."
+    await ctx.send(rank)
+    return print("the rankf command worked")
+
+@client.command()
+async def ranks(ctx, *, summoner2):
+    stats1 = watcher.summoner.by_name(my_region, summoner2)
+    rankStats = watcher.league.by_summoner(my_region, stats1['id'])
+    rank = "In Ranked Solo/Duo, " + stats1['name'] + " is " + rankStats[1]['tier'] + " " + rankStats[1]['rank'] + "."
+    await ctx.send(rank)
+    return print("the ranks command worked")
+
+################################################################################
+
 #wish me luck
 queueList = []
 
