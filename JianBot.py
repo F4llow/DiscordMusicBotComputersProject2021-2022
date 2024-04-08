@@ -14,7 +14,7 @@ sc = Scraper()
 from googleapiclient.discovery import build
 
 #google api key
-api_key = "AIzaSyBxk7rriyZRroJRcVbykCQa2rdArP-hC_4"
+api_key = ENV_GOOGLE_KEY
 
 #set the api requirements as the youtube variable
 youtube = build("youtube", "v3", developerKey = api_key)
@@ -654,4 +654,4 @@ async def play(ctx, *, query):
 #         return
 
 #run the bot
-client.run("ODg3ODYxNDkzMDQ2MDY3MjMy.YUKTcw.f6xHdRiYUz01pOJ25i42ihQ-HLs")
+client.run(ENV_DISCORD_KEY)
